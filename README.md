@@ -28,7 +28,7 @@ In general, this paper conducts end-to-end MER model training on the public data
 
 1. Video interpolation is performed for each ME sample (with RIFE).
 2. Motion magnification and extraction on interpolated frames (with MagNet).
-3. Action Units correlation calculation to produce npz files (with )
+3. Action Units correlation calculation to produce npz files.
 4. Preprocessing : Extract a specified number of ROIs for the optical flow map; and process the original ME sample, convert it to the corresponding data format.
 5. End-to-end training is based on the above ROIs data and AU data.
 
