@@ -62,3 +62,14 @@ optional arguments:
                         Learning rate for training the model
 ```
 
+## Citation
+```
+@inproceedings{huang2023micro,
+  title={Micro-Expression Recognition with Layered Relations and More Input Frames},
+  author={Huang, Pinyi and Wang, Lei and Cai, Tianfu and Guo, Kehua},
+  booktitle={2023 IEEE International Conference on Image Processing (ICIP)},
+  pages={2210--2214},
+  year={2023},
+  organization={IEEE}
+}
+```
