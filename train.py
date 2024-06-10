@@ -19,13 +19,8 @@ import matplotlib.pyplot as plt
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 parallel = 12
-# notes = "尝试直接将联合后的空间特征拉平成160维"
-# notes = "原文方法仅替换使用EVM"
 description = "modelABC_v1"
-# notes = "在第一层GCN中添加LAM。test"
-# notes = f"SMIC 3分类——UAR、UF1"
 notes = f"CASME II 4分类"
-# experiments = "FGRMER"
 experiments = "Ablative_Analysis"
 
 
@@ -130,7 +125,6 @@ def evaluate(test_loader: DataLoader, model: nn.Module, conf_matrix: torch.Tenso
         for patches, labels in test_loader:
             num += len(patches)
             # Move data to device and compute the output
-            # patches = patches.to(torch.float32)
             patches = patches.to(device)
             labels = labels.to(device)
             targets = labels.squeeze()
@@ -142,10 +136,6 @@ def evaluate(test_loader: DataLoader, model: nn.Module, conf_matrix: torch.Tenso
             test_accuracy += prediction.sum().item() / labels.size(0)
             test_f1_score += f1_score(labels.cpu().numpy(), output.argmax(-1).cpu().numpy(),
                                       average="weighted")
-            # test_accuracy += recall_score(labels.cpu().numpy(), output.argmax(-1).cpu().numpy(),
-            #                               average="macro")
-            # test_f1_score += f1_score(labels.cpu().numpy(), output.argmax(-1).cpu().numpy(),
-            #                           average="macro")
 
             conf_matrix = confusion_matrix(output, targets, conf_matrix)
 
@@ -163,7 +153,6 @@ def LOSO_train(data: pd.DataFrame, sub_column: str, args,
     conf_matrix = torch.zeros(args.num_classes, args.num_classes)
 
     for idx in range(len(train_list)):
-        # 实际上仅需要一个
         npz_file = np.load(f"{args.npz_file}/{idx}.npz")  # ground truth adj matrix
         adj_matrix = torch.FloatTensor(npz_file["adj_matrix"]).to(device)
 
@@ -200,12 +189,6 @@ def LOSO_train(data: pd.DataFrame, sub_column: str, args,
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(),
                                      lr=args.learning_rate)
-        # rest_params = [param for name, param in model.named_parameters()
-        #                if name not in "au_gcn.A_L"]
-        # optimizer = torch.optim.Adam([
-        #     {"params": model.au_gcn.A_L, "lr": 0.005},
-        #     {"params": rest_params}
-        # ], lr=args.learning_rate)
 
         # Train the data
         best_accuracy = train(LOSO=idx,
@@ -224,13 +207,11 @@ def LOSO_train(data: pd.DataFrame, sub_column: str, args,
                                                                   model=model,
                                                                   conf_matrix=conf_matrix,
                                                                   device=device)
-        # print(f"In LOSO {idx + 1}, test accuracy: {temp_test_accuracy:.4f}, f1-score: {temp_f1_score:.4f}, "
-        #       f"best accuracy: {best_accuracy:.4f}")
         print(f"In LOSO {idx + 1}, test accuracy: {temp_test_accuracy:.4f}, f1-score: {temp_f1_score:.4f}")
         mlflow.log_metrics({
             "Test Accuracy": float("%.2f" % (100 * temp_test_accuracy)),
             "Test F1-Score": float("%.2f" % (100 * temp_f1_score)),
-            # "Best Accuracy": float("%.2f" % (100 * best_accuracy))
+            "Best Accuracy": float("%.2f" % (100 * best_accuracy))
         }, step=idx + 1)
         test_accuracy += temp_test_accuracy
         test_f1_score += temp_f1_score
@@ -291,20 +272,15 @@ def main():
                         type=str,
                         # required=True,
                         default=r"B:\0_0NewLife\datasets\CASME_2\4classes.csv",  # CASME2
-                        # default=r"B:\0_0NewLife\datasets\SMIC\HS_cropped.csv",  # SMIC
                         help="Path for the csv file for training data")
     parser.add_argument("--mat_dir",
                         type=str,
                         default=r"B:\0_0NewLife\0_Papers\FGRMER\CASME2\mat\MagNet",  # CASME2
-                        # default=r"B:\0_0NewLife\0_Papers\FGRMER\SMIC\mat\MagNet",  # SMIC
                         help="Path for the mat files")
     parser.add_argument("--npz_file",
                         type=str,
-                        # required=True,
-                        # default=r"B:\0_0NewLife\0_Papers\FGRMER\CASME2\npz\(OpenFace)4-npz",
-                        # default=r"B:\0_0NewLife\0_Papers\FGRMER\CASME2\npz\RAW_selected_Inter_10_4npz",
+                        required=True,
                         default=r"B:\0_0NewLife\0_Papers\FGRMER\CASME2\npz\4-npz",  # CASME2
-                        # default=r"B:\0_0NewLife\0_Papers\FGRMER\SMIC\npz",  # CASME2
                         help="Files' root for npz")
     parser.add_argument("--catego",
                         type=str,
