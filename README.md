@@ -1,4 +1,4 @@
-# Micro-expression-recognition-with-layered-relations-and-more-input-frames
+# Micro-expression Recognition with Layered Relations and More Input Frames
 
 ## Introduction
 
@@ -32,7 +32,7 @@ In general, this paper conducts end-to-end MER model training on the public data
 
 Since there are many data files involved, the data path needs to be carefully modified according to the comments.
 
-## DLIB with GPU (not necessary)
+### DLIB with GPU (not necessary)
 
 ```shell
 # Remove the cpu version first
