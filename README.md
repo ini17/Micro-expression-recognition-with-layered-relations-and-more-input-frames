@@ -1,10 +1,8 @@
 # Micro-expression-recognition-with-layered-relations-and-more-input-frames
 
-
-
 ## Introduction
 
-This repo contains all the code needed to reproduce the results of this paper - "Micro-expression-recognition-with-layered-relations-and-more-input-frames" - [[paper]](https://ieeexplore.ieee.org/abstract/document/10222395). It consists of pure Python code.
+This repo contains all the code needed to reproduce the results of this paper - "Micro-expression-recognition-with-layered-relations-and-more-input-frames" - [[paper]](https://ieeexplore.ieee.org/abstract/document/10222395). It consists of pure Python codes.
 
 ## Installation for Python
 
@@ -34,9 +32,52 @@ In general, this paper conducts end-to-end MER model training on the public data
 
 Since there are many data files involved, the data path needs to be carefully modified according to the comments.
 
+## DLIB with GPU (not necessary)
+
+```shell
+# Remove the cpu version first
+$ pip uninstall dlib
+# Install cudnn and its toolkit
+$ conda install cudnn cudatoolkit
+# Build from source
+$ git clone https://github.com/davisking/dlib.git
+$ cd dlib
+$ mkdir build & cd build
+$ cmake .. \
+    -DDLIB_USE_CUDA=1 \
+    -DUSE_AVX_INSTRUCTIONS=1 \
+    -DCMAKE_PREFIX_PATH=<path to  conda env>\
+    -DCMAKE_C_COMPILER=gcc-6 -DCMAKE_CXX_COMPILER=g++-6
+$ cmake --build .
+$ cd ..
+$ python setup.py install \
+    --set USE_AVX_INSTRUCTIONS=1 \
+    --set DLIB_USE_CUDA=1 \
+    --set CMAKE_PREFIX_PATH=<path to  conda env>  \
+    --set CMAKE_C_COMPILER=gcc-6 \
+    --set CMAKE_CXX_COMPILER=g++-
+```
+
+## Pretrained models
+
+### RIFE
+
+The [RIFE](https://github.com/hzwer/ECCV2022-RIFE) (Real-time Intermediate Flow Estimation) model is used in the video interpolation step, and the required model is included in this repo due to its small size.
+
+### MagNet
+
+The structure of MagNet was adapted from [here](https://github.com/ZhengPeng7/motion_magnification_learning-based). Download the pra-trained models, place it in the appropriate directory, and modify the path in `generate_MagNet_images.py` to use it for data preprocessing.
+
+## Datasets
+
+- [CASME II](http://fu.psych.ac.cn/CASME/casme2-en.php)
+- [SAMM](https://personalpages.manchester.ac.uk/staff/adrian.davison/SAMM.html)
+- [SMIC](https://www.oulu.fi/cmvs/node/41319)
+- [MMEW](https://github.com/benxianyeteam/MMEW-Dataset)
+
 ## Training
 
-```
+```shell
 usage: train.py [-h] --parallel parallel --csv_path CSV_PATH 
 				--mat_dir mat_dir --npz_file npz_dir
                 --catego CATEGO [--num_classes NUM_CLASSES]
@@ -63,6 +104,7 @@ optional arguments:
 ```
 
 ## Citation
+
 ```
 @inproceedings{huang2023micro,
   title={Micro-Expression Recognition with Layered Relations and More Input Frames},
