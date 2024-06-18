@@ -181,10 +181,6 @@ def LOSO_train(data: pd.DataFrame, sub_column: str, args,
                      parallel=args.parallel,
                      device=device).to(device)
 
-        if idx != 0:
-            model.load_state_dict(torch.load(f"{args.weight_save_path}/model_best_{idx - 1}.pt",
-                                             map_location=device))
-
         # Create criterion and optimizer
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(),
